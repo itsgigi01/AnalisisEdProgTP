@@ -3,6 +3,7 @@
 Ingeniería en Sistemas de Información – 2026
 
 **Integrantes:** 
+
 -Gil, María de los Ángeles
 
 -Pedernera Cañadas, Candela Nahir
