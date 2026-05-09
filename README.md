@@ -2,10 +2,12 @@
 **Universidad Nacional de Villa Mercedes**
 Ingeniería en Sistemas de Información – 2026
 
-Integrantes: 
-  -Gil, Maria de los Angeles
-  -Pedernera Cañadas, Candela Nahir
-  -Galarza, Valentin
+**Integrantes:** 
+-Gil, María de los Ángeles
+
+-Pedernera Cañadas, Candela Nahir
+
+-Galarza, Valentín
 
 ## Estructura del proyecto
 
@@ -29,8 +31,10 @@ ANEP/
 │   ├── test2.txt
 │   ├── test3.txt
 │   ├── test4.txt
-    ├── test5.txt da error
+│   ├── test5.txt da error
 │   ├── test6.txt da error
+│   ├── test7.txt
+│   ├── test8.txt 
 │
 ├── Analysis.java                    ← análisis de postdominadores y CDG
 ├── ASTNode.java                     ← definición de nodos del AST
@@ -67,7 +71,7 @@ java -cp bin Main
 
 # 4. Ejecutar con archivo propio
 java -cp bin Main test/test1.txt
----
+
 
 
 ## Gramática del lenguaje
