@@ -1,0 +1,336 @@
+options {
+    STATIC = false;
+}
+
+PARSER_BEGIN(MiniLangParser)
+
+import java.util.*;
+import java.io.*;
+
+public class MiniLangParser {
+
+    public static ASTNode.Program parseString(String source)
+            throws ParseException {
+
+        MiniLangParser parser =
+                new MiniLangParser(
+                        new StringReader(source)
+                );
+
+        return parser.Program();
+    }
+
+    public static ASTNode.Program parseFile(String path)
+            throws ParseException, FileNotFoundException {
+
+        MiniLangParser parser =
+                new MiniLangParser(
+                        new FileInputStream(path)
+                );
+
+        return parser.Program();
+    }
+}
+
+PARSER_END(MiniLangParser)
+
+// =====================================================
+// SKIP
+// =====================================================
+
+SKIP :
+{
+      " "
+    | "\t"
+    | "\n"
+    | "\r"
+}
+
+// =====================================================
+// TOKENS
+// =====================================================
+
+TOKEN :
+{
+      < INTEGER : "integer" >
+    | < IF      : "if" >
+    | < ELSE    : "else" >
+    | < WHILE   : "while" >
+
+    | < PLUS    : "+" >
+    | < MINUS   : "-" >
+    | < MULT    : "*" >
+    | < DIV     : "/" >
+
+    | < ASSIGN  : "=" >
+
+    | < LPAREN  : "(" >
+    | < RPAREN  : ")" >
+
+    | < LBRACE  : "{" >
+    | < RBRACE  : "}" >
+
+    | < SEMICOL : ";" >
+
+    | < NUMBER  : (["0"-"9"])+ >
+
+    | < RETURN : "return" >
+
+    | < ID :
+            (["a"-"z","A"-"Z"])
+            (["a"-"z","A"-"Z","0"-"9","_"])*
+      >
+
+    
+}
+
+// =====================================================
+// PROGRAM
+// =====================================================
+
+ASTNode.Program Program() :
+{
+    Token name;
+    List<ASTNode.Stmt> body;
+}
+{
+    <INTEGER>
+    name = <ID>
+
+    <LPAREN>
+    <RPAREN>
+
+    <LBRACE>
+
+    body = Statements()
+
+    <RBRACE>
+
+    {
+        return new ASTNode.Program(body);
+    }
+}
+
+// =====================================================
+// STATEMENTS
+// =====================================================
+
+List<ASTNode.Stmt> Statements() :
+{
+    List<ASTNode.Stmt> stmts =
+            new ArrayList<>();
+
+    ASTNode.Stmt s;
+}
+{
+    (
+        s = Statement()
+        {
+            stmts.add(s);
+        }
+    )*
+
+    {
+        return stmts;
+    }
+}
+
+// =====================================================
+// STATEMENT
+// =====================================================
+
+ASTNode.Stmt Statement() :
+{
+    ASTNode.Stmt s;
+}
+{
+    (
+          s = AssignStmt()
+        | s = IfStmt()
+        | s = WhileStmt()
+        | s = ReturnStmt()
+    )
+
+    {
+        return s;
+    }
+}
+
+// =====================================================
+// ASSIGN
+// =====================================================
+
+ASTNode.AssignStmt AssignStmt() :
+{
+    Token id;
+    ASTNode.Expr expr;
+}
+{
+    id = <ID>
+
+    <ASSIGN>
+
+    expr = Exp()
+
+    <SEMICOL>
+
+    {
+        return new ASTNode.AssignStmt(
+                id.image,
+                expr
+        );
+    }
+}
+
+// =====================================================
+// IF
+// =====================================================
+
+ASTNode.IfStmt IfStmt() :
+{
+    ASTNode.Expr cond;
+
+    List<ASTNode.Stmt> thenBody;
+    List<ASTNode.Stmt> elseBody;
+}
+{
+    <IF>
+
+    <LPAREN>
+
+    cond = Exp()
+
+    <RPAREN>
+
+    <LBRACE>
+
+    thenBody = Statements()
+
+    <RBRACE>
+
+    <ELSE>
+
+    <LBRACE>
+
+    elseBody = Statements()
+
+    <RBRACE>
+
+    {
+        return new ASTNode.IfStmt(
+                cond,
+                thenBody,
+                elseBody
+        );
+    }
+}
+
+ASTNode.ReturnStmt ReturnStmt() :
+{
+    ASTNode.Expr expr;
+}
+{
+    <RETURN>
+
+    expr = Exp()
+
+    <SEMICOL>
+
+    {
+        return new ASTNode.ReturnStmt(expr);
+    }
+}
+
+// =====================================================
+// WHILE
+// =====================================================
+
+ASTNode.WhileStmt WhileStmt() :
+{
+    ASTNode.Expr cond;
+
+    List<ASTNode.Stmt> body;
+}
+{
+    <WHILE>
+
+    <LPAREN>
+
+    cond = Exp()
+
+    <RPAREN>
+
+    <LBRACE>
+
+    body = Statements()
+
+    <RBRACE>
+
+    {
+        return new ASTNode.WhileStmt(
+                cond,
+                body
+        );
+    }
+}
+
+// =====================================================
+// EXP
+// =====================================================
+
+ASTNode.Expr Exp() :
+{
+    ASTNode.Expr left;
+    ASTNode.Expr right;
+}
+{
+    left = Value()
+
+    (
+        <PLUS>
+        right = Value()
+
+        {
+            left =
+                new ASTNode.BinopExpr(
+                    left,
+                    "+",
+                    right
+                );
+        }
+    )*
+
+    {
+        return left;
+    }
+}
+
+// =====================================================
+// VALUE
+// =====================================================
+
+ASTNode.ValueExpr Value() :
+{
+    Token t;
+}
+{
+      t = <ID>
+
+      {
+          return new ASTNode.ValueExpr(
+                  t.image,
+                  true
+          );
+      }
+
+    |
+
+      t = <NUMBER>
+
+      {
+          return new ASTNode.ValueExpr(
+                  t.image,
+                  false
+          );
+      }
+}

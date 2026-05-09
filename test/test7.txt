@@ -1,0 +1,20 @@
+integer nested_if() {
+    x = 1;
+    y = 2;
+
+    if (x) {
+        z = x + y;
+
+        if (z) {
+            w = z + 1;
+        } else {
+            w = y + 1;
+        }
+
+    } else {
+        z = 0;
+        w = 0;
+    }
+
+    return w;
+}

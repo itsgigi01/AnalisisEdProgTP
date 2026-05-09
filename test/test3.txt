@@ -1,0 +1,13 @@
+integer f() {
+x = 6;
+y = 4;
+
+if (y) {
+    z = x + 1;
+}
+else{
+    y = x + z;
+}
+
+return z;
+}

@@ -1,0 +1,22 @@
+digraph CDG {
+  rankdir=TB;
+  label="Control Dependence Graph";
+  labelloc=t;
+  node [fontname=Helvetica, fontsize=12];
+
+  0 [label="ENTRY", shape=ellipse, style=filled, fillcolor="#4CAF50", fontcolor=white];
+  1 [label="x = 3", shape=box, style=filled, fillcolor="#ECEFF1", fontcolor=black];
+  2 [label="if (y)", shape=diamond, style=filled, fillcolor="#2196F3", fontcolor=white];
+  3 [label="z = (x + 1)", shape=box, style=filled, fillcolor="#ECEFF1", fontcolor=black];
+  4 [label="y = (x + z)", shape=box, style=filled, fillcolor="#ECEFF1", fontcolor=black];
+  5 [label="return z", shape=box, style=filled, fillcolor="#FF9800", fontcolor=white];
+  6 [label="EXIT", shape=ellipse, style=filled, fillcolor="#F44336", fontcolor=white];
+
+  0 -> 1;
+  0 -> 3;
+  0 -> 4;
+  0 -> 5;
+  2 -> 3;
+  2 -> 4;
+  0 -> 2;
+}

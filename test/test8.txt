@@ -1,0 +1,17 @@
+integer while_if() {
+    x = 3;
+    y = 0;
+
+    while (x) {
+        if (y) {
+            z = y + 1;
+        } else {
+            z = x + 2;
+        }
+
+        y = z;
+        x = x + 1;
+    }
+
+    return y;
+}

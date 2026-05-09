@@ -1,0 +1,27 @@
+digraph PostDomTree {
+  rankdir=BT;
+  label="Árbol de Postdominadores";
+  labelloc=t;
+  node [fontname=Helvetica, fontsize=12];
+
+  { rank=same; 6; }
+  { rank=same; 5; }
+  { rank=same; 2; 3; 4; }
+  { rank=same; 1; }
+  { rank=same; 0; }
+
+  0 [label="ENTRY", shape=ellipse, style=filled, fillcolor="#4CAF50", fontcolor=white];
+  1 [label="x = 3", shape=box, style=filled, fillcolor="#ECEFF1", fontcolor=black];
+  2 [label="if (y)", shape=diamond, style=filled, fillcolor="#2196F3", fontcolor=white];
+  3 [label="z = (x + 1)", shape=box, style=filled, fillcolor="#ECEFF1", fontcolor=black];
+  4 [label="y = (x + z)", shape=box, style=filled, fillcolor="#ECEFF1", fontcolor=black];
+  5 [label="return z", shape=box, style=filled, fillcolor="#FF9800", fontcolor=white];
+  6 [label="EXIT", shape=ellipse, style=filled, fillcolor="#F44336", fontcolor=white];
+
+  0 -> 1 [style=dashed, color="#607D8B"];
+  1 -> 2 [style=dashed, color="#607D8B"];
+  2 -> 5 [style=dashed, color="#607D8B"];
+  3 -> 5 [style=dashed, color="#607D8B"];
+  4 -> 5 [style=dashed, color="#607D8B"];
+  5 -> 6 [style=dashed, color="#607D8B"];
+}
