@@ -14,9 +14,24 @@ public class CDGBuilder {
                 new HashSet<>();
 
         // =====================================
+        // Sucesores directos de ENTRY en el CFG
+        // Solo estos nodos (primer nivel)
+        // dependen de ENTRY
+        // =====================================
+
+        Set<Integer> directSuccessorsOfEntry =
+                new HashSet<>();
+
+        for (CFGBuilder.CFGEdge e : cfg.edges) {
+            if (e.src == cfg.entry) {
+                directSuccessorsOfEntry.add(e.dst);
+            }
+        }
+
+        // =====================================
         // Dependencias desde ENTRY
-        // todos los nodos excepto ENTRY, EXIT,
-        // IF y WHILE
+        // Solo nodos de primer nivel que NO sean
+        // IF, WHILE, ENTRY ni EXIT
         // =====================================
 
         for (CFGBuilder.CFGNode node :
@@ -24,6 +39,12 @@ public class CDGBuilder {
 
             if (node.id == cfg.entry) continue;
             if (node.id == cfg.exit)  continue;
+
+            // BUG 2 FIX: solo nodos directamente
+            // conectados a ENTRY (primer nivel)
+            if (!directSuccessorsOfEntry
+                    .contains(node.id)) continue;
+
             if (node.type == CFGBuilder.NodeType.IF
                     || node.type == CFGBuilder.NodeType.WHILE) continue;
 
@@ -37,7 +58,7 @@ public class CDGBuilder {
 
         // =====================================
         // Dependencias desde IF / WHILE
-        // solo sucesores que NO son el
+        // Solo sucesores que NO son el
         // post-dominador inmediato del predicado
         // =====================================
 
@@ -63,9 +84,11 @@ public class CDGBuilder {
                 if (ipdomA != null
                         && edge.dst == ipdomA) continue;
 
-                // Saltar el back-edge del while
-                // (el sucesor que es el propio A)
-                if (edge.dst == A) continue;
+                // BUG 1 FIX: se elimina el filtro
+                // del back-edge del while.
+                // El nodo WHILE SÍ debe tener
+                // auto-arco (depende de sí mismo)
+                // if (edge.dst == A) continue; ← ELIMINADO
 
                 String key = A + "-" + edge.dst;
 
