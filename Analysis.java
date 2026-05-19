@@ -124,12 +124,15 @@ public class Analysis {
                         continue;
                     }
 
-                    // Filtrar autoarcos:
-                    // el nodo no puede depender
-                    // de su propia definicion
-                    if (def.nodeId == node.id) {
-                        continue;
-                    }
+                    // BUG 3 FIX: se elimina el filtro
+                    // de autoarcos. En un ciclo while,
+                    // "x = x+1" usa la x que ella misma
+                    // definió en la iteración anterior,
+                    // por lo que SÍ debe aparecer en el DDG.
+                    // Los duplicados ya los maneja "added".
+                    // if (def.nodeId == node.id) { ← ELIMINADO
+                    //     continue;
+                    // }
 
                     // Filtrar duplicados
                     String key =
